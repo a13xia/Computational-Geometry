@@ -1,0 +1,33 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.spatial import Voronoi, voronoi_plot_2d, Delaunay
+
+# Define the points A, B, C, D, E
+points = np.array([[3, 5], [6, 6], [6, 4], [9, 5], [9, 7]])
+
+# Compute the Voronoi diagram
+vor = Voronoi(points)
+
+# Compute the Delaunay triangulation
+delaunay = Delaunay(points)
+
+# Plot Voronoi diagram
+fig, ax = plt.subplots(1, 2, figsize=(12, 6))
+
+# Voronoi plot
+voronoi_plot_2d(vor, ax=ax[0], show_vertices=False)
+ax[0].set_title("Voronoi Diagram")
+ax[0].scatter(points[:, 0], points[:, 1], color='red')  # Mark points
+for i, point in enumerate(points):
+    ax[0].text(point[0], point[1], f' {chr(65 + i)}', color='black', fontsize=12, ha='right')
+
+# Delaunay plot
+ax[1].triplot(points[:, 0], points[:, 1], delaunay.simplices, color='blue')
+ax[1].scatter(points[:, 0], points[:, 1], color='red')  # Mark points
+for i, point in enumerate(points):
+    ax[1].text(point[0], point[1], f' {chr(65 + i)}', color='black', fontsize=12, ha='right')
+
+ax[1].set_title("Delaunay Triangulation")
+
+plt.tight_layout()
+plt.show()

@@ -1,0 +1,53 @@
+import numpy as np
+from scipy.spatial.distance import cdist
+from scipy.sparse.csgraph import minimum_spanning_tree
+import matplotlib.pyplot as plt
+
+# Define the points
+points = np.array([
+    [1, 6],  # A
+    [1, 1],  # B
+    [-4, 7], # C
+    [6, 7],  # D
+    [1, -1], # E
+    [5, 3],  # F
+    [-2, 3], # P
+])
+
+# Function to calculate the MST length for a given value of lambda
+def mst_length(lambda_val):
+    # Define Q based on lambda
+    Q = np.array([lambda_val - 2, 3])
+
+    # Append Q to the points
+    all_points = np.vstack([points, Q])
+
+    # Calculate pairwise distances between all points
+    dist_matrix = cdist(all_points, all_points)
+
+    # Compute the MST using Kruskal's algorithm (minimum spanning tree)
+    mst = minimum_spanning_tree(dist_matrix).toarray()
+
+    # Return the total length of the MST (sum of all edge weights)
+    return np.sum(mst)
+
+# Lambda values to test
+lambda_values = np.linspace(0, 10, 100)  # You can adjust this range based on observation
+
+# Compute the MST length for each lambda value
+mst_lengths = np.array([mst_length(lam) for lam in lambda_values])
+
+# Find the lambda that minimizes the MST length
+optimal_lambda = lambda_values[np.argmin(mst_lengths)]
+
+# Plot the MST length as a function of lambda
+plt.plot(lambda_values, mst_lengths)
+plt.xlabel("Lambda (λ)")
+plt.ylabel("Length of Minimum Spanning Tree")
+plt.title("MST Length vs. Lambda")
+plt.grid(True)
+plt.show()
+
+# Output the optimal lambda and corresponding MST length
+print(f"The optimal value of lambda that minimizes the MST length is: {optimal_lambda}")
+print(f"Minimal MST length: {min(mst_lengths)}")

@@ -1,0 +1,34 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.spatial import Voronoi, voronoi_plot_2d
+
+# Define the points A1 to A6
+points = np.array([[5, 1], [7, -1], [9, -1], [7, 3], [11, 1], [9, 3]])
+
+# Add points A7 and A8, which we'll place to create half-line edges
+# We will place A7 and A8 such that the Voronoi diagram has 4 half-line edges
+A7 = np.array([4, 2])  # Point A7 near A1 and A2
+A8 = np.array([12, 2])  # Point A8 near A5 and A6
+
+# Combine all points
+all_points = np.vstack([points, A7, A8])
+
+# Compute the Voronoi diagram
+vor = Voronoi(all_points)
+
+# Plot the Voronoi diagram
+fig, ax = plt.subplots(figsize=(8, 8))
+voronoi_plot_2d(vor, ax=ax, show_vertices=False)
+
+# Plot the points and label them
+ax.scatter(all_points[:, 0], all_points[:, 1], color='red')
+
+# Label the points
+labels = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8']
+for i, point in enumerate(all_points):
+    ax.text(point[0], point[1], labels[i], color='black', fontsize=12, ha='right')
+
+# Set the title
+ax.set_title("Voronoi Diagram with A1 to A8 (4 half-line edges)")
+
+plt.show()

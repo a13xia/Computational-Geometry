@@ -1,0 +1,63 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.spatial import Delaunay, Voronoi, voronoi_plot_2d
+
+# Function to calculate the number of edges in a triangulation
+def count_edges(triangulation):
+    edges = set()
+    for simplex in triangulation.simplices:
+        # Each triangle has 3 edges, sort points to avoid double counting
+        edges.add(tuple(sorted([simplex[i], simplex[(i+1)%3]])) for i in range(3))
+    return len(edges)
+
+# Function to calculate the number of half-line edges in a Voronoi diagram
+def count_half_line_edges(voronoi):
+    count = 0
+    for ridge_points in voronoi.ridge_points:
+        if -1 in ridge_points:  # Ridge connected to infinity
+            count += 1
+    return count
+
+# Define the two sets of points
+M1 = np.array([[0, 0], [1, 0], [0, 1], [1, 1], [0.5, 0.5]])  # 5 points
+M2 = np.array([[0, 0], [1, 0], [0, 1], [1, 1], [0.5, 0.5], [0.7, 0.7]])  # 6 points
+
+# Delaunay triangulation for M1 and M2
+triangulation_M1 = Delaunay(M1)
+triangulation_M2 = Delaunay(M2)
+
+# Voronoi diagram for M1 and M2
+voronoi_M1 = Voronoi(M1)
+voronoi_M2 = Voronoi(M2)
+
+# Calculate the number of edges in each triangulation
+edges_M1 = count_edges(triangulation_M1)
+edges_M2 = count_edges(triangulation_M2)
+
+# Calculate the number of half-line edges in each Voronoi diagram
+half_line_edges_M1 = count_half_line_edges(voronoi_M1)
+half_line_edges_M2 = count_half_line_edges(voronoi_M2)
+
+# Output the results
+print(f"Set M1 (5 points):")
+print(f"  Number of edges in triangulation: {edges_M1}")
+print(f"  Number of half-line edges in Voronoi diagram: {half_line_edges_M1}")
+
+print(f"\nSet M2 (6 points):")
+print(f"  Number of edges in triangulation: {edges_M2}")
+print(f"  Number of half-line edges in Voronoi diagram: {half_line_edges_M2}")
+
+# Plot the points and their Voronoi diagrams
+fig, axes = plt.subplots(1, 2, figsize=(12, 6))
+
+# Plot M1 and its Voronoi diagram
+voronoi_plot_2d(voronoi_M1, ax=axes[0], show_vertices=False)
+axes[0].scatter(M1[:, 0], M1[:, 1], color='red')
+axes[0].set_title("Voronoi Diagram of M1")
+
+# Plot M2 and its Voronoi diagram
+voronoi_plot_2d(voronoi_M2, ax=axes[1], show_vertices=False)
+axes[1].scatter(M2[:, 0], M2[:, 1], color='blue')
+axes[1].set_title("Voronoi Diagram of M2")
+
+plt.show()

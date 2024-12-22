@@ -1,0 +1,30 @@
+import numpy as np
+from scipy.spatial import Voronoi, voronoi_plot_2d
+import matplotlib.pyplot as plt
+
+# Generate points A, B, and C
+A_points = np.array([[1 + i, i - 1] for i in range(6)])
+B_points = np.array([[-i, i] for i in range(6)])
+C_points = np.array([[0, i] for i in range(6)])
+
+# Combine all points into one set
+points = np.vstack((A_points, B_points, C_points))
+
+# Compute the Voronoi diagram
+vor = Voronoi(points)
+
+# Count the number of half-lines (Voronoi edges)
+half_lines = 0
+for ridge in vor.ridge_vertices:
+    # Only count edges that are within the diagram (i.e., not at infinity)
+    if -1 not in ridge:
+        half_lines += 1
+
+# Output the result
+print(f'Number of half-lines in the Voronoi diagram: {half_lines}')
+
+# Optional: Plot the Voronoi diagram
+fig, ax = plt.subplots()
+voronoi_plot_2d(vor, ax=ax, show_vertices=False)
+ax.set_title("Voronoi Diagram")
+plt.show()
